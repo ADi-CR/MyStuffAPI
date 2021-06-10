@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyStuffAPI.Models;
+using MyStuffAPI.Attributes;
 
 namespace MyStuffAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiKey]
     public class UserStatusController : ControllerBase
     {
         private readonly MyStuffDBContext _context;
