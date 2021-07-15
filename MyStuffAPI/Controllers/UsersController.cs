@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using MyStuffAPI.Models;
 using MyStuffAPI.Attributes;
 
+using MyStuffAPI.Tools;
+
 namespace MyStuffAPI.Controllers
 {
     [Route("api/[controller]")]
@@ -34,6 +36,28 @@ namespace MyStuffAPI.Controllers
         public async Task<ActionResult<User>> GetUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return user;
+        }
+
+        //este get, recibe por param el email (encriptado para que no vaya a ser capturado cuando
+        //se llama a la ruta del API, ya que puede ser usado para spam) y el pass también encriptado 
+        //por seguridad. 
+
+        // GET: api/Users/email/pass
+        [HttpGet("{email}/{pass}")]
+        public async Task<ActionResult<User>> ValidateUser(string email, string pass)
+        {
+            Crypto MiEncriptador = new Crypto();
+
+            string Email = MiEncriptador.DesEncriptarData(email);
+
+            var user = await _context.Users.SingleOrDefaultAsync(e => e.Username == Email && e.UserPassword == pass && e.UserStatusId == 1);
 
             if (user == null)
             {
@@ -79,6 +103,12 @@ namespace MyStuffAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
+            Crypto MiEncriptador = new Crypto();
+
+            string Username = MiEncriptador.DesEncriptarData(user.Username);
+
+            user.Username = Username;
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
