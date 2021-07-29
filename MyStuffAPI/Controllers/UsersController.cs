@@ -67,6 +67,20 @@ namespace MyStuffAPI.Controllers
             return user;
         }
 
+        // GET: api/Users/ValidateUser2
+        [HttpGet("ValidateUser2")]
+        public async Task<ActionResult<User>> ValidateUser2(string email, string pass)
+        {            
+            var user = await _context.Users.SingleOrDefaultAsync(e => e.Username == email && e.UserPassword == pass && e.UserStatusId == 1);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return user;
+        }
+
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -103,12 +117,6 @@ namespace MyStuffAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-            Crypto MiEncriptador = new Crypto();
-
-            string Username = MiEncriptador.DesEncriptarData(user.Username);
-
-            user.Username = Username;
-
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
