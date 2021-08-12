@@ -28,6 +28,7 @@ namespace MyStuffAPI.Controllers
         {
             return await _context.Currencies.ToListAsync();
         }
+                
 
         // GET: api/Currencies/5
         [HttpGet("{id}")]
